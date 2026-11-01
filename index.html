@@ -2,525 +2,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
-<title>Bhopal CivicLens | Smart City Intelligence</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📍%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-*{box-sizing:border-box}
-body{font-family:Inter,sans-serif;background:radial-gradient(circle at 10% 0%,#0f233d 0%,#060d19 45%);color:#e2e8f0}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#0b1422}
-::-webkit-scrollbar-thumb{background:#1e324a;border-radius:4px}
-.leaflet-popup-content-wrapper{background:#0e1a2b!important;color:#f1f5f9!important;border:1px solid #2a4365!important;border-radius:12px!important}
-.leaflet-popup-tip{background:#0e1a2b!important}
-.leaflet-container{background:#0a1320!important;font-family:Inter,sans-serif!important}
-.custom-pin{display:flex;align-items:center;justify-content:center;border-radius:50%;color:white;font-weight:bold;box-shadow:0 0 12px #0009}
-.cat-btn.active{background:#38bdf833;border-color:#38bdf8;color:#38bdf8}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhopal CivicLens | Smart City Intelligence</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📍%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{margin:0;background:#07111f;color:#e5edf8;font-family:Arial,sans-serif}
+    .panel{background:#101e30;border:1px solid #263b52;border-radius:14px}
+    .muted{color:#91a5bc}
+    #map{height:490px;width:100%;border-radius:12px;z-index:1}
+    .filter{padding:9px 14px;border-radius:20px;border:1px solid #38516b;color:#b9c9da}
+    .filter.active{background:#0e7490;color:white;border-color:#0e7490}
+    .facility{padding:13px;border-bottom:1px solid #263b52;cursor:pointer}
+    .facility:hover{background:#192c41}
+    .stat{font-size:27px;font-weight:bold;color:#67e8f9}
+    button{cursor:pointer}
+    .leaflet-popup-content-wrapper{border-radius:10px}
+  </style>
 </head>
-
-<body class="min-h-screen">
-<div class="max-w-[1550px] mx-auto p-4 sm:p-6 lg:p-8">
-
-<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-700">
-<div>
-<div class="flex items-center gap-2">
-<span class="text-2xl">📍</span>
-<h1 class="text-3xl font-extrabold text-white">Civic<span class="text-sky-400">Lens</span></h1>
-</div>
-<p class="text-xs font-semibold tracking-widest text-slate-400 mt-1 uppercase">Bhopal Smart City Intelligence & Geospatial Explorer</p>
-</div>
-<div class="flex items-center gap-3 bg-slate-900 border border-slate-700 px-4 py-3 rounded-full text-xs">
-<span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-<span id="statusText">Initializing map...</span>
-</div>
+<body>
+<header class="px-5 py-5 md:px-10 border-b border-slate-800">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-cyan-300">📍 CivicLens</h1>
+      <p class="text-xs tracking-widest muted mt-1">BHOPAL SMART CITY INTELLIGENCE</p>
+    </div>
+    <span class="text-xs bg-amber-900 text-amber-200 px-3 py-2 rounded-full">STATIC DEMO DATA</span>
+  </div>
 </header>
 
-<section class="my-6">
-<div class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-1">Open Geospatial Explorer</div>
-<h2 class="text-xl sm:text-3xl font-bold text-white">Explore Bhopal Facilities & City Infrastructure</h2>
-<p class="text-slate-400 text-sm mt-2 max-w-3xl">
-Explore healthcare, education, emergency services and public spaces mapped in OpenStreetMap.
-</p>
-</section>
+<main class="max-w-7xl mx-auto p-4 md:p-8">
+  <section class="mb-7">
+    <p class="text-cyan-400 text-sm font-semibold tracking-widest">GEOSPATIAL PUBLIC SERVICE EXPLORER</p>
+    <h2 class="text-3xl md:text-4xl font-bold mt-3">Explore Bhopal. Understand Your City.</h2>
+    <p class="muted mt-3 max-w-3xl">Explore a demonstration directory of public facilities in Bhopal through an interactive map. Discover healthcare, education, emergency services and public spaces.</p>
+    <p class="text-amber-300 text-xs mt-3">Note: This is a manually curated demonstration dataset with approximate map locations. It is not live or an official verified directory.</p>
+  </section>
 
-<section class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
-<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
-<small class="text-slate-400 uppercase">Total Facilities</small>
-<strong id="statTotal" class="text-3xl block mt-2">0</strong>
-</div>
-<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
-<small class="text-red-400 uppercase">Healthcare</small>
-<strong id="statHealth" class="text-3xl block mt-2 text-red-400">0</strong>
-</div>
-<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
-<small class="text-blue-400 uppercase">Education</small>
-<strong id="statEdu" class="text-3xl block mt-2 text-blue-400">0</strong>
-</div>
-<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
-<small class="text-amber-400 uppercase">Emergency & Public</small>
-<strong id="statOther" class="text-3xl block mt-2 text-amber-400">0</strong>
-</div>
-</section>
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="panel p-4"><p class="muted text-sm">Facilities listed</p><div class="stat" id="total">0</div><p class="muted text-xs">Demo records</p></div>
+    <div class="panel p-4"><p class="muted text-sm">Healthcare</p><div class="stat" id="healthCount">0</div><p class="muted text-xs">Hospitals</p></div>
+    <div class="panel p-4"><p class="muted text-sm">Education</p><div class="stat" id="educationCount">0</div><p class="muted text-xs">Institutions</p></div>
+    <div class="panel p-4"><p class="muted text-sm">Other services</p><div class="stat" id="otherCount">0</div><p class="muted text-xs">Public spaces and emergency</p></div>
+  </section>
 
-<main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <section class="panel p-4 md:p-5 mb-6">
+    <div class="flex flex-col md:flex-row md:justify-between gap-3 mb-4">
+      <div><h3 class="text-xl font-bold">City Intelligence Map</h3><p class="muted text-sm">Bhopal, Madhya Pradesh</p></div>
+      <input id="search" type="search" placeholder="Search facilities..." class="rounded-lg px-4 py-2 bg-slate-900 border border-slate-600 w-full md:w-72">
+    </div>
+    <div class="flex gap-2 flex-wrap mb-4">
+      <button class="filter active" data-category="All">All</button>
+      <button class="filter" data-category="Healthcare">Healthcare</button>
+      <button class="filter" data-category="Education">Education</button>
+      <button class="filter" data-category="Emergency">Emergency</button>
+      <button class="filter" data-category="Public spaces">Public spaces</button>
+    </div>
+    <div id="map"></div>
+    <div class="flex gap-3 flex-wrap mt-4">
+      <button id="locate" class="bg-cyan-800 hover:bg-cyan-700 px-4 py-2 rounded-lg">◎ Find my location</button>
+      <button id="reset" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg">⌖ Reset map</button>
+    </div>
+  </section>
 
-<section class="lg:col-span-8 bg-slate-900 border border-slate-700 rounded-2xl p-4">
-<div class="flex flex-col gap-3 mb-4">
-<div>
-<h3 class="text-lg font-bold">City Intelligence Map</h3>
-<span class="text-xs text-slate-400">Bhopal, Madhya Pradesh, India</span>
-</div>
-<div id="categoryFilters" class="flex flex-wrap gap-2">
-<button data-cat="All" class="cat-btn active border border-sky-400 px-3 py-2 rounded-lg text-xs">All</button>
-<button data-cat="Healthcare" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Healthcare</button>
-<button data-cat="Education" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Education</button>
-<button data-cat="Emergency" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Emergency</button>
-<button data-cat="Public spaces" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Public Spaces</button>
-</div>
-</div>
+  <section class="grid md:grid-cols-3 gap-5">
+    <div class="panel p-5 md:col-span-2">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xl font-bold">Explore Facilities</h3>
+        <span id="resultCount" class="muted text-sm">0 results</span>
+      </div>
+      <div id="directory"></div>
+    </div>
+    <div class="panel p-5">
+      <h3 class="text-xl font-bold mb-4">Area Distribution</h3>
+      <div id="distribution" class="space-y-4"></div>
+    </div>
+  </section>
 
-<div id="map" class="w-full h-[460px] sm:h-[520px] rounded-xl overflow-hidden"></div>
-<div class="flex justify-between text-xs text-slate-400 mt-3">
-<span>Map tiles © OpenStreetMap contributors</span>
-<span id="dataProvenance">Source: OpenStreetMap</span>
-</div>
-</section>
+  <section class="panel p-5 mt-6">
+    <h3 class="text-xl font-bold mb-3">Data & Technology</h3>
+    <div class="grid md:grid-cols-2 gap-3 text-sm">
+      <p><span class="muted">Map rendering:</span> Leaflet.js</p>
+      <p><span class="muted">Map tiles:</span> OpenStreetMap</p>
+      <p><span class="muted">Facility data:</span> Static demonstration records</p>
+      <p><span class="muted">Hosting:</span> GitHub Pages</p>
+      <p><span class="muted">AWS integration:</span> Planned, not yet active</p>
+      <p><span class="muted">Map attribution:</span> OpenStreetMap contributors</p>
+    </div>
+  </section>
 
-<aside class="lg:col-span-4 bg-slate-900 border border-slate-700 rounded-2xl p-4 flex flex-col">
-<div class="flex justify-between items-center mb-3">
-<h3 class="text-lg font-bold">Facility Directory</h3>
-<span id="resultCount" class="text-xs text-sky-400">0 results</span>
-</div>
-
-<input id="searchInput" type="text" placeholder="Search hospital, college, park..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm outline-none mb-3">
-
-<div id="statusMessage" class="text-xs text-slate-400 bg-slate-950 border border-slate-700 p-3 rounded-lg mb-3">
-Waiting for OpenStreetMap data...
-</div>
-
-<div id="facilityList" class="flex flex-col gap-2 overflow-y-auto max-h-[340px] mb-4">
-</div>
-
-<div class="grid grid-cols-3 gap-2 mt-auto pt-3 border-t border-slate-700">
-<button id="btnLocate" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">🎯 My Location</button>
-<button id="btnRefresh" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">🔄 Refresh</button>
-<button id="btnReset" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">⌖ Reset</button>
-</div>
-</aside>
+  <section class="mt-6 mb-8">
+    <h3 class="text-xl font-bold mb-2">About CivicLens</h3>
+    <p class="muted text-sm leading-6">Bhopal CivicLens is a geospatial learning project designed to demonstrate how people can explore public facilities through an interactive city map. The current version uses a small static demonstration dataset. Locations are approximate and should be independently verified before visiting or relying on them for emergency needs.</p>
+  </section>
 </main>
 
-<section class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-<div class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
-<h3 class="font-bold mb-3">Cardinal Facility Spread</h3>
-<p id="directionalText" class="text-sm text-slate-400">Waiting for spatial data...</p>
-<div class="mt-4 space-y-3 text-sm">
-<div class="flex justify-between"><span>North / South</span><span id="axisNSVal">0% / 0%</span></div>
-<div class="h-2 bg-slate-800 rounded-full overflow-hidden flex">
-<div id="barNorth" class="bg-sky-400" style="width:50%"></div>
-<div id="barSouth" class="bg-indigo-500" style="width:50%"></div>
-</div>
-<div class="flex justify-between"><span>East / West</span><span id="axisEWVal">0% / 0%</span></div>
-<div class="h-2 bg-slate-800 rounded-full overflow-hidden flex">
-<div id="barEast" class="bg-emerald-500" style="width:50%"></div>
-<div id="barWest" class="bg-amber-500" style="width:50%"></div>
-</div>
-</div>
-</div>
-
-<div class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
-<h3 class="font-bold mb-3">Data & Architecture</h3>
-<p class="text-sm text-slate-400 leading-relaxed">
-CivicLens uses Leaflet for map visualization and OpenStreetMap Overpass API for retrieving mapped public facilities. Data shown depends on the availability and completeness of OpenStreetMap.
-</p>
-<div class="flex flex-wrap gap-2 mt-4">
-<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">OpenStreetMap</span>
-<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">Overpass API</span>
-<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">Leaflet JS</span>
-</div>
-<p class="text-xs text-amber-400 mt-4">AWS integration is not yet enabled in this version.</p>
-</div>
-</section>
-
-<section class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
-<h3 class="font-bold mb-2">About Bhopal CivicLens</h3>
-<p class="text-sm text-slate-400">
-An interactive geospatial explorer for public facilities in Bhopal, Madhya Pradesh. OpenStreetMap data may be incomplete or outdated. For emergencies, use official emergency services.
-</p>
-</section>
-</div>
-
-<footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-700 mt-8">
-BHOPAL CIVICLENS · Geospatial Intelligence Project · © OpenStreetMap Contributors
+<footer class="text-center text-xs muted border-t border-slate-800 p-5">
+  BHOPAL CIVICLENS · GEOSPATIAL LEARNING PROJECT · MAP DATA © OPENSTREETMAP CONTRIBUTORS
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-(() => {
-'use strict';
-
-const CENTER = [23.2599, 77.4126];
-const ZOOM = 12;
-
-const $ = id => document.getElementById(id);
-
-const endpoints = [
-'https://overpass-api.de/api/interpreter',
-'https://overpass.kumi.systems/api/interpreter',
-'https://overpass.private.coffee/api/interpreter'
+const facilities = [
+ {name:"AIIMS Bhopal",category:"Healthcare",area:"Saket Nagar",lat:23.2065,lng:77.4606},
+ {name:"Hamidia Hospital",category:"Healthcare",area:"Royal Market",lat:23.2599,lng:77.4033},
+ {name:"Bansal Hospital",category:"Healthcare",area:"Shahpura",lat:23.1634,lng:77.4295},
+ {name:"Jawaharlal Nehru Cancer Hospital",category:"Healthcare",area:"Idgah Hills",lat:23.2700,lng:77.4000},
+ {name:"People's Hospital",category:"Healthcare",area:"Bhanpur",lat:23.3080,lng:77.4070},
+ {name:"MANIT Bhopal",category:"Education",area:"Link Road No. 3",lat:23.2156,lng:77.4010},
+ {name:"Barkatullah University",category:"Education",area:"Hoshangabad Road",lat:23.2070,lng:77.4550},
+ {name:"Maulana Azad National Institute of Technology",category:"Education",area:"Link Road No. 3",lat:23.2150,lng:77.4015},
+ {name:"Government MVM College",category:"Education",area:"Shivaji Nagar",lat:23.2380,lng:77.4070},
+ {name:"National Law Institute University",category:"Education",area:"Bhauri Road",lat:23.1780,lng:77.4600},
+ {name:"IISER Bhopal",category:"Education",area:"Bhauri",lat:23.2810,lng:77.2650},
+ {name:"Van Vihar National Park",category:"Public spaces",area:"Shyamla Hills",lat:23.2290,lng:77.3610},
+ {name:"Upper Lake (Bhojtal)",category:"Public spaces",area:"Bhopal",lat:23.2500,lng:77.3400},
+ {name:"DB City Mall",category:"Public spaces",area:"MP Nagar",lat:23.2330,lng:77.4320},
+ {name:"Shaurya Smarak",category:"Public spaces",area:"Arera Hills",lat:23.2330,lng:77.4240},
+ {name:"Tribal Museum",category:"Public spaces",area:"Shyamla Hills",lat:23.2350,lng:77.3940},
+ {name:"Bhopal Railway Station",category:"Emergency",area:"Bhopal Junction",lat:23.2670,lng:77.4130},
+ {name:"Raja Bhoj Airport",category:"Emergency",area:"Gandhi Nagar",lat:23.2870,lng:77.3370}
 ];
 
-const categoryConfig = {
-'Healthcare': {color:'#ef4444', icon:'🏥'},
-'Education': {color:'#3b82f6', icon:'🎓'},
-'Emergency': {color:'#f59e0b', icon:'🚨'},
-'Public spaces': {color:'#10b981', icon:'🌳'}
-};
-
-let map;
-let markers;
-let facilities = [];
-let activeCategory = 'All';
-let loading = false;
-let userMarker = null;
-
-function status(message, type='loading') {
-$('statusText').textContent = message;
-const dot = $('statusDot');
-dot.className = 'w-2.5 h-2.5 rounded-full ' +
-(type === 'success' ? 'bg-emerald-400' :
-type === 'error' ? 'bg-red-500' : 'bg-amber-400 animate-pulse');
-}
-
-function escapeHTML(value) {
-return String(value).replace(/[&<>"']/g, c => ({
-'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-}[c]));
-}
-
-function initMap() {
-if (!window.L) {
-status('Map library unavailable', 'error');
-$('statusMessage').textContent = 'Leaflet could not load. Check your internet connection.';
-return false;
-}
-
-map = L.map('map').setView(CENTER, ZOOM);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-maxZoom: 19,
-attribution: '&copy; OpenStreetMap contributors'
+const map=L.map('map').setView([23.2599,77.4126],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+ maxZoom:19,
+ attribution:'&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-markers = L.layerGroup().addTo(map);
-return true;
+let markers=[];
+let activeCategory="All";
+
+const colors={
+ Healthcare:"#22c55e",
+ Education:"#3b82f6",
+ Emergency:"#f59e0b",
+ "Public spaces":"#a78bfa"
+};
+
+function showFacilities(){
+ const term=document.getElementById('search').value.toLowerCase();
+ const filtered=facilities.filter(f=>
+  (activeCategory==="All"||f.category===activeCategory)&&
+  (f.name.toLowerCase().includes(term)||f.area.toLowerCase().includes(term))
+ );
+
+ markers.forEach(m=>map.removeLayer(m));
+ markers=[];
+
+ filtered.forEach(f=>{
+  const marker=L.circleMarker([f.lat,f.lng],{
+   radius:8,color:colors[f.category],fillColor:colors[f.category],
+   fillOpacity:.9,weight:2
+  }).addTo(map);
+  marker.bindPopup(`<b>${f.name}</b><br>${f.category}<br>${f.area}<br><small>Approximate demo location</small>`);
+  markers.push(marker);
+ });
+
+ document.getElementById('resultCount').textContent=filtered.length+" results";
+ document.getElementById('directory').innerHTML=filtered.length?filtered.map((f,i)=>`
+  <div class="facility" data-index="${facilities.indexOf(f)}">
+   <div class="flex justify-between gap-2">
+    <div><b>${f.name}</b><p class="muted text-sm mt-1">${f.area}</p></div>
+    <span class="text-xs px-2 py-1 rounded h-fit" style="background:${colors[f.category]}22;color:${colors[f.category]}">${f.category}</span>
+   </div>
+  </div>`).join(''):'<p class="muted p-4">No facilities match your search.</p>';
+
+ document.querySelectorAll('.facility').forEach(el=>{
+  el.addEventListener('click',()=>{
+   const f=facilities[Number(el.dataset.index)];
+   map.setView([f.lat,f.lng],16);
+   markers.find(m=>m.getLatLng().lat===f.lat&&m.getLatLng().lng===f.lng)?.openPopup();
+  });
+ });
 }
 
-function classify(tags) {
-const a = tags.amenity || '';
-const l = tags.leisure || '';
-const t = tags.tourism || '';
+function updateStats(){
+ const count=category=>facilities.filter(f=>f.category===category).length;
+ document.getElementById('total').textContent=facilities.length;
+ document.getElementById('healthCount').textContent=count('Healthcare');
+ document.getElementById('educationCount').textContent=count('Education');
+ document.getElementById('otherCount').textContent=count('Emergency')+count('Public spaces');
 
-if (['hospital','clinic','doctors','pharmacy'].includes(a) || tags.healthcare) return 'Healthcare';
-if (['school','college','university','kindergarten'].includes(a)) return 'Education';
-if (['police','fire_station'].includes(a)) return 'Emergency';
-if (['park','garden'].includes(l) || ['museum','attraction'].includes(t) || ['bus_station','library'].includes(a)) return 'Public spaces';
-
-return null;
+ document.getElementById('distribution').innerHTML=Object.keys(colors).map(cat=>{
+  const n=count(cat),pct=Math.round(n/facilities.length*100);
+  return `<div><div class="flex justify-between text-sm mb-2"><span>${cat}</span><b>${n}</b></div>
+  <div class="h-2 rounded bg-slate-700 overflow-hidden"><div class="h-2 rounded" style="width:${pct}%;background:${colors[cat]}"></div></div></div>`;
+ }).join('');
 }
 
-function coordinates(element) {
-if (Number.isFinite(element.lat) && Number.isFinite(element.lon)) {
-return [element.lat, element.lon];
-}
-if (element.center && Number.isFinite(element.center.lat) && Number.isFinite(element.center.lon)) {
-return [element.center.lat, element.center.lon];
-}
-return null;
-}
-
-function getFiltered() {
-const query = $('searchInput').value.trim().toLowerCase();
-
-return facilities.filter(f => {
-const categoryMatch = activeCategory === 'All' || f.category === activeCategory;
-const textMatch = !query || (f.name + ' ' + f.category + ' ' + f.type).toLowerCase().includes(query);
-return categoryMatch && textMatch;
-});
-}
-
-function render() {
-if (!map || !markers) return;
-
-markers.clearLayers();
-
-const visible = getFiltered();
-$('resultCount').textContent = visible.length + ' results';
-
-visible.forEach((f, index) => {
-const cfg = categoryConfig[f.category];
-
-const icon = L.divIcon({
-className: '',
-html: `<div class="custom-pin" style="background:${cfg.color};width:29px;height:29px">${cfg.icon}</div>`,
-iconSize:[29,29],
-iconAnchor:[14,14]
-});
-
-const popup = `
-<div style="min-width:150px">
-<strong>${escapeHTML(f.name)}</strong>
-<p>${escapeHTML(f.category)} · ${escapeHTML(f.type)}</p>
-<p style="font-size:10px;color:#94a3b8">
-${f.lat.toFixed(5)}, ${f.lon.toFixed(5)}
-</p>
-</div>`;
-
-L.marker([f.lat,f.lon], {icon})
-.bindPopup(popup)
-.addTo(markers);
-});
-
-if (!visible.length) {
-$('facilityList').innerHTML =
-'<div class="text-center py-8 text-slate-400 text-sm">No facilities to display.</div>';
-} else {
-$('facilityList').innerHTML = visible.map((f,i) => `
-<div class="bg-slate-950 border border-slate-700 p-3 rounded-xl flex justify-between items-center gap-2">
-<div class="min-w-0">
-<div class="text-xs text-slate-400">${categoryConfig[f.category].icon} ${escapeHTML(f.category)}</div>
-<div class="text-sm font-semibold truncate">${escapeHTML(f.name)}</div>
-<div class="text-xs text-slate-500 truncate">${escapeHTML(f.type)}</div>
-</div>
-<button data-index="${i}" class="view-btn bg-slate-800 px-3 py-2 rounded-lg text-xs">View</button>
-</div>`).join('');
-
-$('facilityList').querySelectorAll('.view-btn').forEach(button => {
-button.addEventListener('click', () => {
-const item = visible[Number(button.dataset.index)];
-map.flyTo([item.lat,item.lon],16);
-L.popup().setLatLng([item.lat,item.lon])
-.setContent(`<strong>${escapeHTML(item.name)}</strong>`)
-.openOn(map);
-});
-});
-}
-
-const total = facilities.length;
-const health = facilities.filter(f=>f.category==='Healthcare').length;
-const education = facilities.filter(f=>f.category==='Education').length;
-const other = total-health-education;
-
-$('statTotal').textContent = total;
-$('statHealth').textContent = health;
-$('statEdu').textContent = education;
-$('statOther').textContent = other;
-
-updateAnalytics();
-}
-
-function updateAnalytics() {
-const total = facilities.length;
-
-if (!total) {
-$('directionalText').textContent = 'No live spatial data available.';
-$('axisNSVal').textContent = '0% / 0%';
-$('axisEWVal').textContent = '0% / 0%';
-['barNorth','barSouth','barEast','barWest'].forEach(id => $(id).style.width='50%');
-return;
-}
-
-let north=0,south=0,east=0,west=0;
-
-facilities.forEach(f => {
-if (f.lat >= CENTER[0]) north++; else south++;
-if (f.lon >= CENTER[1]) east++; else west++;
+document.querySelectorAll('.filter').forEach(btn=>{
+ btn.addEventListener('click',()=>{
+  document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCategory=btn.dataset.category;
+  showFacilities();
+ });
 });
 
-const n=Math.round(north/total*100);
-const s=100-n;
-const e=Math.round(east/total*100);
-const w=100-e;
-
-$('axisNSVal').textContent = `${n}% / ${s}%`;
-$('axisEWVal').textContent = `${e}% / ${w}%`;
-$('barNorth').style.width=n+'%';
-$('barSouth').style.width=s+'%';
-$('barEast').style.width=e+'%';
-$('barWest').style.width=w+'%';
-$('directionalText').textContent = `Based on ${total} facilities returned by OpenStreetMap.`;
-}
-
-function makeQuery() {
-return `
-[out:json][timeout:25];
-(
-nwr["amenity"~"hospital|clinic|doctors|pharmacy|school|college|university|kindergarten|police|fire_station|bus_station|library"](23.15,77.25,23.35,77.55);
-nwr["leisure"~"park|garden"](23.15,77.25,23.35,77.55);
-nwr["tourism"~"museum|attraction"](23.15,77.25,23.35,77.55);
-);
-out center 150;
-`;
-}
-
-async function fetchEndpoint(endpoint, query) {
-const controller = new AbortController();
-const timer = setTimeout(() => controller.abort(), 20000);
-
-try {
-const url = endpoint + '?data=' + encodeURIComponent(query);
-const response = await fetch(url, {
-method:'GET',
-signal:controller.signal
+document.getElementById('search').addEventListener('input',showFacilities);
+document.getElementById('reset').addEventListener('click',()=>{
+ document.getElementById('search').value='';
+ activeCategory='All';
+ document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.category==='All'));
+ map.setView([23.2599,77.4126],12);
+ showFacilities();
+});
+document.getElementById('locate').addEventListener('click',()=>{
+ if(!navigator.geolocation){alert('Location is not supported by this browser.');return;}
+ navigator.geolocation.getCurrentPosition(pos=>{
+  map.setView([pos.coords.latitude,pos.coords.longitude],15);
+  L.marker([pos.coords.latitude,pos.coords.longitude]).addTo(map).bindPopup('Your current location').openPopup();
+ },()=>alert('Could not access your location. Please allow location permission.'));
 });
 
-if (!response.ok) throw new Error('HTTP ' + response.status);
-
-const data = await response.json();
-if (!data || !Array.isArray(data.elements)) {
-throw new Error('Invalid response');
-}
-return data.elements;
-} finally {
-clearTimeout(timer);
-}
-}
-
-async function loadData() {
-if (loading || !map) return;
-loading = true;
-$('btnRefresh').disabled = true;
-
-status('Connecting to OpenStreetMap...');
-$('statusMessage').textContent = 'Requesting live mapped facilities from OpenStreetMap...';
-
-let loaded = false;
-const query = makeQuery();
-const errors = [];
-
-try {
-for (const endpoint of endpoints) {
-try {
-const elements = await fetchEndpoint(endpoint,query);
-const result = [];
-const seen = new Set();
-
-elements.forEach(el => {
-const tags = el.tags || {};
-const category = classify(tags);
-const coords = coordinates(el);
-
-if (!category || !coords) return;
-
-const name = tags.name || tags['name:en'] || tags.official_name;
-if (!name) return;
-
-const id = el.type + '/' + el.id;
-if (seen.has(id)) return;
-seen.add(id);
-
-result.push({
-id,
-name,
-category,
-type: tags.amenity || tags.leisure || tags.tourism || 'Public facility',
-lat:coords[0],
-lon:coords[1]
-});
-});
-
-facilities = result;
-loaded = true;
-
-$('dataProvenance').textContent = 'Source: OpenStreetMap';
-$('statusMessage').textContent =
-`Received ${facilities.length} named facilities from OpenStreetMap.`;
-status('Live OSM Connected','success');
-break;
-
-} catch(error) {
-errors.push(error.message);
-console.warn('OSM endpoint failed:', endpoint, error);
-}
-}
-
-if (!loaded) {
-facilities = [];
-$('dataProvenance').textContent = 'Source: No live data';
-$('statusMessage').textContent =
-'OpenStreetMap services are currently unavailable. No sample or fabricated facilities are displayed. Please try Refresh later.';
-status('Live Data Unavailable','error');
-}
-
-render();
-
-} finally {
-loading = false;
-$('btnRefresh').disabled = false;
-}
-}
-
-$('categoryFilters').addEventListener('click', event => {
-const button = event.target.closest('button[data-cat]');
-if (!button) return;
-
-activeCategory = button.dataset.cat;
-
-document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-button.classList.add('active');
-
-render();
-});
-
-$('searchInput').addEventListener('input',render);
-$('btnRefresh').addEventListener('click',loadData);
-
-$('btnReset').addEventListener('click',() => {
-map.setView(CENTER,ZOOM);
-$('searchInput').value='';
-activeCategory='All';
-document.querySelectorAll('.cat-btn').forEach(b => {
-b.classList.toggle('active',b.dataset.cat==='All');
-});
-render();
-});
-
-$('btnLocate').addEventListener('click',() => {
-if (!navigator.geolocation) {
-$('statusMessage').textContent='Geolocation is not supported by this browser.';
-return;
-}
-
-$('statusMessage').textContent='Requesting your location permission...';
-
-navigator.geolocation.getCurrentPosition(position => {
-const lat=position.coords.latitude;
-const lon=position.coords.longitude;
-
-if (userMarker) map.removeLayer(userMarker);
-
-userMarker=L.marker([lat,lon]).addTo(map)
-.bindPopup('Your current location')
-.openPopup();
-
-map.flyTo([lat,lon],14);
-},() => {
-$('statusMessage').textContent='Location unavailable. Check browser permission settings.';
-});
-});
-
-if (initMap()) {
-render();
-loadData();
-}
-
-})();
+updateStats();
+showFacilities();
 </script>
 </body>
 </html>
