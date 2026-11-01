@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhopal CivicLens | Smart City Explorer</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071321;color:#eaf3ff;font-family:Arial,sans-serif}
+header{padding:20px 28px;background:#0c1b2d;border-bottom:1px solid #20364d;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:800;color:#45c7ff}
+.logo span{display:block;font-size:11px;color:#a8bed2;font-weight:400;letter-spacing:2px}
+header input{padding:12px 16px;width:min(340px,100%);background:#14283d;border:1px solid #34516d;border-radius:10px;color:white}
+main{padding:24px;max-width:1500px;margin:auto}
+h2{font-size:20px;margin:0 0 17px}
+.muted{color:#91a9bf;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.card{background:#102238;border:1px solid #233c56;border-radius:13px;padding:18px}
+.stat strong{display:block;font-size:27px;color:#48c9ff;margin-bottom:5px}
+.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:18px}
+#map{height:510px;border-radius:13px;border:1px solid #34516d;z-index:1}
+.panel{background:#102238;border:1px solid #233c56;border-radius:13px;padding:18px;margin-bottom:16px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filters button{background:#172e45;color:#c8d9e9;border:1px solid #34516d;padding:9px 13px;border-radius:20px;cursor:pointer}
+.filters button.active,.filters button:hover{background:#087eb5;color:white;border-color:#38c5ff}
+.place{padding:12px 0;border-bottom:1px solid #294057;display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.place:last-child{border:0}
+.tag{font-size:11px;color:#54d1ff}
+footer{text-align:center;padding:25px;color:#91a9bf;border-top:1px solid #20364d;margin-top:25px}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}#map{height:400px}}
+@media(max-width:480px){main{padding:14px}.stats{grid-template-columns:1fr 1fr}.card{padding:13px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">📍 CivicLens <span>BHOPAL SMART CITY EXPLORER</span></div>
+ <input id="search" placeholder="Search hospitals, colleges, places...">
+ <div>🟢 Bhopal, Madhya Pradesh</div>
+</header>
+
+<main>
+ <h2>Explore Your City</h2>
+ <p class="muted">Discover essential public facilities across Bhopal.</p>
+
+ <section class="stats">
+  <div class="card stat"><strong id="total">8</strong>Locations mapped</div>
+  <div class="card stat"><strong id="hospitals">2</strong>Healthcare locations</div>
+  <div class="card stat"><strong id="education">2</strong>Education locations</div>
+  <div class="card stat"><strong id="other">4</strong>Other public places</div>
+ </section>
+
+ <section class="layout">
+  <div>
+   <div class="panel">
+    <h2>📍 Bhopal Map Explorer</h2>
+    <div class="filters" id="filters">
+     <button class="active" data-type="All">All Places</button>
+     <button data-type="Hospital">Hospitals</button>
+     <button data-type="College">Colleges</button>
+     <button data-type="Transport">Transport</button>
+     <button data-type="Tourism">Tourism</button>
+    </div>
+    <div id="map"></div>
+    <p class="muted">Map data © OpenStreetMap contributors. Locations are an initial demo dataset.</p>
+   </div>
+  </div>
+
+  <aside>
+   <div class="panel">
+    <h2>Nearby Places</h2>
+    <p class="muted">Explore locations included in this prototype.</p>
+    <div id="places"></div>
+   </div>
+   <div class="panel">
+    <h2>About CivicLens</h2>
+    <p class="muted">CivicLens is a geospatial project concept that brings public-service locations together on one map.</p>
+    <p>🔵 Healthcare and education</p>
+    <p>🟣 Transport and tourism</p>
+    <p>🟢 Location-based discovery</p>
+   </div>
+   <div class="panel">
+    <h2>Project Roadmap</h2>
+    <p class="muted">01 — Interactive map prototype</p>
+    <p class="muted">02 — Verified public datasets</p>
+    <p class="muted">03 — AWS Location Service integration</p>
+    <p class="muted">04 — Service coverage analysis</p>
+   </div>
+  </aside>
+ </section>
+</main>
+
+<footer>Building a smarter Bhopal with data, insights and technology. <br><br> Bhopal CivicLens | Prototype v1.0</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const locations=[
+{name:"AIIMS Bhopal",type:"Hospital",lat:23.2065,lng:77.4575},
+{name:"Bansal Hospital",type:"Hospital",lat:23.2115,lng:77.4050},
+{name:"MANIT Bhopal",type:"College",lat:23.2155,lng:77.4025},
+{name:"Barkatullah University",type:"College",lat:23.2045,lng:77.4510},
+{name:"Bhopal Junction",type:"Transport",lat:23.2680,lng:77.4130},
+{name:"Upper Lake",type:"Tourism",lat:23.2510,lng:77.3650},
+{name:"Van Vihar",type:"Tourism",lat:23.2380,lng:77.3550},
+{name:"Tribal Museum",type:"Tourism",lat:23.2330,lng:77.4020}
+];
+
+const map=L.map('map').setView([23.25,77.40],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let activeType="All";
+let markers=[];
+
+function render(){
+ markers.forEach(m=>map.removeLayer(m));
+ markers=[];
+ const query=document.getElementById('search').value.toLowerCase();
+ const filtered=locations.filter(p=>
+ (activeType==="All"||p.type===activeType)&&p.name.toLowerCase().includes(query)
+ );
+ document.getElementById('places').innerHTML=filtered.map(p=>
+ `<div class="place"><div><b>${p.name}</b><br><span class="tag">${p.type}</span></div><span>📍</span></div>`
+ ).join('')||'<p class="muted">No matching locations found.</p>';
+
+ filtered.forEach(p=>{
+ const marker=L.marker([p.lat,p.lng]).addTo(map)
+ .bindPopup(`<b>${p.name}</b><br>${p.type}`);
+ markers.push(marker);
+ });
+}
+document.getElementById('filters').addEventListener('click',e=>{
+ if(e.target.tagName!=="BUTTON")return;
+ document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+ e.target.classList.add('active');
+ activeType=e.target.dataset.type;
+ render();
+});
+document.getElementById('search').addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
