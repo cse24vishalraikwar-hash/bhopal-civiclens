@@ -3,458 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07111f">
 <title>Bhopal CivicLens | Smart City Intelligence</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
 <style>
-:root{
-  --bg:#071321;--panel:#102238;--panel2:#142b42;
-  --border:#263f58;--text:#eaf4ff;--muted:#91a9bf;
-  --cyan:#42c8ff;--green:#45d6a0;--orange:#ffbd69;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-header{
-  padding:19px 4%;background:#0b1b2d;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap
-}
-.brand{font-size:25px;font-weight:800;color:var(--cyan)}
-.brand small{display:block;font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:5px}
-.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.status{font-size:12px;color:var(--green);padding:8px 12px;border:1px solid #245c50;border-radius:20px}
-.search{padding:12px 15px;width:min(310px,80vw);background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:white;outline:none}
-main{max-width:1550px;margin:auto;padding:25px}
-.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:bold}
-h1{font-size:29px;margin:9px 0}
-.subtitle{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 22px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.card,.panel{background:var(--panel);border:1px solid var(--border);border-radius:13px}
-.stat{padding:18px}
-.stat span{font-size:12px;color:var(--muted)}
-.stat strong{display:block;font-size:28px;color:var(--cyan);margin:8px 0 4px}
-.stat small{color:var(--muted);font-size:11px}
-.content{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(290px,1fr);gap:17px}
-.panel{padding:17px;margin-bottom:16px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
-h2{font-size:17px;margin:0}
-.muted{font-size:12px;color:var(--muted);line-height:1.5}
-#map{height:510px;border-radius:10px;z-index:1;background:#13283b}
-.map-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-button{cursor:pointer;border:1px solid var(--border);border-radius:8px;padding:9px 12px;background:#18334d;color:var(--text);font-size:12px}
-button:hover,button.active{background:#087eb5;border-color:var(--cyan)}
-.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
-.place-list{max-height:440px;overflow:auto}
-.place{padding:12px 3px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
-.place:last-child{border:0}
-.place strong{font-size:13px;display:block;margin-bottom:5px}
-.place small{font-size:11px;color:var(--muted)}
-.tag{font-size:10px;color:var(--cyan);white-space:nowrap}
-.zone-row{margin:13px 0}
-.zone-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
-.bar{height:7px;background:#20384f;border-radius:10px;overflow:hidden}
-.bar span{display:block;height:100%;background:linear-gradient(90deg,#087eb5,#42c8ff);border-radius:10px}
-.notice{padding:11px;border-radius:8px;background:#142d43;color:#b9d1e5;font-size:12px;line-height:1.5;margin-top:12px}
-.error{color:#ffbd69}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:24px;border-top:1px solid var(--border);margin-top:20px}
-a{color:var(--cyan)}
-@media(max-width:900px){.content{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#map{height:430px}}
-@media(max-width:480px){main{padding:14px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:23px}h1{font-size:23px}#map{height:360px}}
+:root{--bg:#07111f;--panel:#101e30;--line:#263a52;--text:#edf5ff;--muted:#91a5bd;--cyan:#39d5e8;--green:#48d597}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#10243b 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+.wrap{max-width:1450px;margin:auto;padding:26px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:28px}
+.brand{font-size:24px;font-weight:800}.brand span{color:var(--cyan)}.subbrand{font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:5px}
+.status{border:1px solid var(--line);background:#102238;padding:10px 14px;border-radius:30px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:8px;height:8px;background:#e5b85c;border-radius:50%;margin-right:8px}
+.hero{margin:24px 0}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:3px;font-weight:700}.hero h1{font-size:clamp(28px,4vw,46px);margin:10px 0}.hero p{color:var(--muted);max-width:720px;line-height:1.6;margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.stat,.panel{background:linear-gradient(145deg,var(--panel),#0c1929);border:1px solid var(--line);border-radius:16px}.stat{padding:18px}.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase}.stat strong{display:block;font-size:30px;margin:9px 0 3px}.stat span{font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:16px}.panel{padding:18px;min-width:0}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:15px}.panel h2{font-size:17px;margin:0}.muted{color:var(--muted);font-size:12px}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}.filter,button{border:1px solid var(--line);background:#13243a;color:#cbd9e9;border-radius:9px;padding:9px 12px;cursor:pointer;font-size:12px}.filter.active{background:#123d4b;border-color:#247f8c;color:#7ceafa}.filter:hover,button:hover{border-color:var(--cyan)}
+#map{height:490px;border-radius:12px;overflow:hidden;background:#14243a}.mapnote{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.5}
+.search{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:#0b1828;color:var(--text);outline:none;margin-bottom:12px}.search:focus{border-color:var(--cyan)}
+.list{display:flex;flex-direction:column;gap:9px;max-height:440px;overflow:auto}.place{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;background:#0d1a2b;border:1px solid #203249;border-radius:11px}.place b{display:block;font-size:13px}.place small{display:block;color:var(--muted);margin-top:5px}.place button{padding:7px 10px;white-space:nowrap}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.info p{color:var(--muted);font-size:13px;line-height:1.7}.pill{display:inline-block;background:#122c3d;border:1px solid #245064;color:#8ce9f3;border-radius:20px;padding:6px 9px;font-size:11px;margin:4px 4px 0 0}
+#message{color:var(--muted);font-size:12px;margin:10px 0}.error{color:#ffb4a9!important}.footer{text-align:center;color:#71869e;font-size:11px;padding:26px 0 8px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.bottom{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#map{height:420px}}
+@media(max-width:480px){.wrap{padding:15px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:25px}#map{height:360px}}
 </style>
 </head>
-
 <body>
-<header>
-  <div class="brand">CivicLens <small>BHOPAL SMART CITY INTELLIGENCE</small></div>
-  <div class="header-right">
-    <span class="status" id="status">● Connecting to data</span>
-    <input class="search" id="search" placeholder="Search hospitals, colleges, places...">
-  </div>
+<div class="wrap">
+<header class="top">
+ <div><div class="brand">📍 <span>CivicLens</span></div><div class="subbrand">BHOPAL SMART CITY INTELLIGENCE</div></div>
+ <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Starting map…</span></div>
 </header>
-
-<main>
-  <div class="eyebrow">GEOSPATIAL PUBLIC SERVICE EXPLORER</div>
-  <h1>Explore Bhopal. Understand Your City.</h1>
-  <p class="subtitle">
-    Discover public facilities across Bhopal through an interactive map.
-    Explore healthcare, education, emergency services and public spaces using open map data.
-  </p>
-
-  <section class="stats">
-    <div class="card stat">
-      <span>FACILITIES FOUND</span>
-      <strong id="total">—</strong>
-      <small>OpenStreetMap results</small>
-    </div>
-    <div class="card stat">
-      <span>HEALTHCARE</span>
-      <strong id="health">—</strong>
-      <small>Hospitals and clinics</small>
-    </div>
-    <div class="card stat">
-      <span>EDUCATION</span>
-      <strong id="education">—</strong>
-      <small>Schools and colleges</small>
-    </div>
-    <div class="card stat">
-      <span>OTHER SERVICES</span>
-      <strong id="other">—</strong>
-      <small>Transport, police and parks</small>
-    </div>
-  </section>
-
-  <section class="content">
-    <div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>City Intelligence Map</h2>
-          <span class="muted">Bhopal, Madhya Pradesh</span>
-        </div>
-        <div id="map"></div>
-        <div class="map-actions">
-          <button onclick="locateMe()">◎ Find my location</button>
-          <button onclick="loadFacilities()">↻ Refresh data</button>
-          <button onclick="resetMap()">⌖ Reset map</button>
-        </div>
-        <div class="notice" id="mapMessage">
-          Loading public facility data from OpenStreetMap. Please wait.
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>About CivicLens</h2>
-        <p class="muted">
-          Bhopal CivicLens is a geospatial exploration project that helps people
-          discover important public facilities across Bhopal. It combines
-          interactive mapping, category-based discovery and location data analysis.
-        </p>
-        <p class="muted">
-          The project aims to make public information easier to explore and provide
-          a starting point for understanding how essential services are distributed.
-        </p>
-      </div>
-    </div>
-
-    <aside>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Explore Facilities</h2>
-          <span class="muted" id="resultCount">0 results</span>
-        </div>
-        <div class="filters">
-          <button class="active" data-filter="all" onclick="setFilter('all',this)">All</button>
-          <button data-filter="health" onclick="setFilter('health',this)">Healthcare</button>
-          <button data-filter="education" onclick="setFilter('education',this)">Education</button>
-          <button data-filter="emergency" onclick="setFilter('emergency',this)">Emergency</button>
-          <button data-filter="other" onclick="setFilter('other',this)">Public spaces</button>
-        </div>
-        <div class="place-list" id="places">
-          <p class="muted">Waiting for map data...</p>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Area Distribution</h2>
-        <p class="muted">Facility counts grouped by broad geographic direction.</p>
-        <div id="zones">
-          <p class="muted">Analysis will appear after data loads.</p>
-        </div>
-        <div class="notice">
-          This is an exploratory distribution summary, not an official measurement
-          of service quality or coverage gaps.
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Data & Technology</h2>
-        <p class="muted">
-          <b>Map:</b> Leaflet + OpenStreetMap<br>
-          <b>Facility data:</b> OpenStreetMap Overpass API<br>
-          <b>Hosting:</b> GitHub Pages<br>
-          <b>AWS integration:</b> Planned next phase
-        </p>
-      </div>
-    </aside>
-  </section>
+<section class="hero">
+ <div class="eyebrow">GEOSPATIAL PUBLIC SERVICE EXPLORER</div>
+ <h1>Explore Bhopal. Understand Your City.</h1>
+ <p>Discover public facilities across Bhopal through an interactive map. Explore healthcare, education, emergency services and public spaces using open map data.</p>
+</section>
+<section class="stats">
+ <div class="stat"><small>Facilities found</small><strong id="total">—</strong><span>OpenStreetMap results</span></div>
+ <div class="stat"><small>Healthcare</small><strong id="health">—</strong><span>Hospitals and clinics</span></div>
+ <div class="stat"><small>Education</small><strong id="education">—</strong><span>Schools and colleges</span></div>
+ <div class="stat"><small>Other services</small><strong id="other">—</strong><span>Emergency and public places</span></div>
+</section>
+<main class="layout">
+ <section class="panel">
+  <div class="panelhead"><h2>City Intelligence Map</h2><span class="muted">Bhopal, Madhya Pradesh</span></div>
+  <div class="filters" id="filters">
+   <button class="filter active" data-category="All">All</button><button class="filter" data-category="Healthcare">Healthcare</button><button class="filter" data-category="Education">Education</button><button class="filter" data-category="Emergency">Emergency</button><button class="filter" data-category="Public spaces">Public spaces</button>
+  </div>
+  <div id="map"></div>
+  <div class="mapnote">Map tiles © OpenStreetMap contributors. Facility data © OpenStreetMap contributors via Overpass API. Results depend on public data availability and API response.</div>
+ </section>
+ <aside class="panel">
+  <div class="panelhead"><h2>Explore Facilities</h2><span class="muted" id="resultCount">0 results</span></div>
+  <input class="search" id="search" placeholder="Search hospitals, colleges, places…" aria-label="Search facilities">
+  <div id="message">Loading public facilities. This may take up to a minute.</div>
+  <div class="list" id="placeList"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+   <button id="locate">◎ Find my location</button><button id="refresh">↻ Refresh data</button><button id="reset">⌖ Reset map</button>
+  </div>
+ </aside>
 </main>
-
-<footer>
-  BHOPAL CIVICLENS · Built as a geospatial learning project ·
-  Map data © OpenStreetMap contributors
-</footer>
-
+<section class="bottom">
+ <div class="panel info"><h2>Area Distribution</h2><p id="distribution">Facility counts grouped by broad geographic direction will appear after data loads. This is an exploratory distribution summary, not an official measurement of service quality or coverage gaps.</p></div>
+ <div class="panel info"><h2>Data & Technology</h2><p>Map rendering: Leaflet. Map tiles: OpenStreetMap. Facility data: OpenStreetMap Overpass API. Hosting: GitHub Pages. AWS integration is planned as the next development phase.</p><span class="pill">Open data</span><span class="pill">Interactive map</span><span class="pill">Geospatial discovery</span></div>
+</section>
+<section class="panel info" style="margin-top:16px"><h2>About CivicLens</h2><p>Bhopal CivicLens is a geospatial exploration project that helps people discover public facilities across Bhopal. It combines interactive mapping, category-based discovery and location data analysis. This prototype is a learning project; listings may be incomplete and should be independently verified before use in an emergency.</p></section>
+<div class="footer">BHOPAL CIVICLENS · Built as a geospatial learning project · Map data © OpenStreetMap contributors</div>
+</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const BHOPAL = [23.2599,77.4126];
-const map = L.map('map').setView(BHOPAL,12);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19,
-  attribution:'&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-let facilities = [];
-let markers = [];
-let activeFilter = 'all';
-let userMarker = null;
-
-const categoryColors = {
-  health:'#ff7777',
-  education:'#48c8ff',
-  emergency:'#ffbd69',
-  other:'#54d6a2'
-};
-
-function classify(tags){
-  const amenity = tags.amenity || '';
-  const leisure = tags.leisure || '';
-  const tourism = tags.tourism || '';
-  const landuse = tags.landuse || '';
-
-  if(['hospital','clinic','doctors','dentist','pharmacy'].includes(amenity))
-    return 'health';
-
-  if(['school','college','university','kindergarten'].includes(amenity))
-    return 'education';
-
-  if(['police','fire_station'].includes(amenity))
-    return 'emergency';
-
-  if(['bus_station','ferry_terminal'].includes(amenity) ||
-     ['park','playground'].includes(leisure) ||
-     ['museum','attraction','gallery'].includes(tourism) ||
-     landuse === 'recreation_ground')
-    return 'other';
-
-  return null;
-}
-
-function categoryName(category){
-  return {
-    health:'Healthcare',
-    education:'Education',
-    emergency:'Emergency',
-    other:'Public space / Transport'
-  }[category] || 'Other';
-}
-
-function getName(tags){
-  return tags.name || tags['name:en'] || tags.official_name || 'Unnamed facility';
-}
-
-function getCoordinates(element){
-  if(element.lat && element.lon) return [element.lat,element.lon];
-  if(element.center) return [element.center.lat,element.center.lon];
-  return null;
-}
-
-async function loadFacilities(){
-  const status = document.getElementById('status');
-  const message = document.getElementById('mapMessage');
-  status.textContent = '● Loading data';
-  message.textContent = 'Fetching public facilities from OpenStreetMap...';
-
-  const query = `
-    [out:json][timeout:35];
-    (
-      node(around:15000,23.2599,77.4126)[amenity~"hospital|clinic|doctors|dentist|pharmacy|school|college|university|kindergarten|police|fire_station|bus_station|ferry_terminal"];
-      way(around:15000,23.2599,77.4126)[amenity~"hospital|clinic|doctors|dentist|pharmacy|school|college|university|kindergarten|police|fire_station|bus_station|ferry_terminal"];
-      relation(around:15000,23.2599,77.4126)[amenity~"hospital|clinic|doctors|dentist|pharmacy|school|college|university|kindergarten|police|fire_station|bus_station|ferry_terminal"];
-      node(around:15000,23.2599,77.4126)[leisure~"park|playground"];
-      way(around:15000,23.2599,77.4126)[leisure~"park|playground"];
-      node(around:15000,23.2599,77.4126)[tourism~"museum|attraction|gallery"];
-      way(around:15000,23.2599,77.4126)[tourism~"museum|attraction|gallery"];
-    );
-    out center tags;
-  `;
-
-  try{
-    const response = await fetch('https://overpass-api.de/api/interpreter',{
-      method:'POST',
-      body:query,
-      headers:{'Content-Type':'text/plain'}
+(() => {
+ const center=[23.2599,77.4126], map=L.map('map').setView(center,12);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+ const layer=L.layerGroup().addTo(map);
+ let facilities=[], activeCategory='All';
+ const $=id=>document.getElementById(id);
+ const endpoints=[
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter'
+ ];
+ const query='[out:json][timeout:25];(node(around:15000,23.2599,77.4126)[amenity~"^(hospital|clinic|doctors|dentist|school|college|university|kindergarten|police|fire_station|bus_station|bus_terminal|place_of_worship|community_centre|library)$"];way(around:15000,23.2599,77.4126)[amenity~"^(hospital|clinic|doctors|dentist|school|college|university|kindergarten|police|fire_station|bus_station|bus_terminal|place_of_worship|community_centre|library)$"];relation(around:15000,23.2599,77.4126)[amenity~"^(hospital|clinic|doctors|dentist|school|college|university|kindergarten|police|fire_station|bus_station|bus_terminal|place_of_worship|community_centre|library)$"];node(around:15000,23.2599,77.4126)[leisure~"^(park|garden)$"];way(around:15000,23.2599,77.4126)[leisure~"^(park|garden)$"];node(around:15000,23.2599,77.4126)[tourism~"^(museum|attraction|gallery)$"];way(around:15000,23.2599,77.4126)[tourism~"^(museum|attraction|gallery)$"];);out center tags;';
+ function category(tags){
+  const a=tags.amenity||'', l=tags.leisure||'', t=tags.tourism||'';
+  if(['hospital','clinic','doctors','dentist'].includes(a))return 'Healthcare';
+  if(['school','college','university','kindergarten'].includes(a))return 'Education';
+  if(['police','fire_station'].includes(a))return 'Emergency';
+  if(['bus_station','bus_terminal','place_of_worship','community_centre','library'].includes(a)||['park','garden'].includes(l)||['museum','attraction','gallery'].includes(t))return 'Public spaces';
+  return 'Other';
+ }
+ function coords(el){return [el.lat??el.center?.lat,el.lon??el.center?.lon]}
+ function setStatus(text,error=false){$('statusText').textContent=text;$('statusDot').style.background=error?'#ff8d80':'#48d597'}
+ function popupText(item){return `<strong>${escapeHtml(item.name)}</strong><br>${escapeHtml(item.category)}`}
+ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function visible(){const q=$('search').value.trim().toLowerCase();return facilities.filter(x=>(activeCategory==='All'||x.category===activeCategory)&&(x.name.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)))}
+ function render(){
+  const rows=visible();layer.clearLayers();$('placeList').innerHTML='';
+  rows.forEach(item=>{
+   const marker=L.circleMarker([item.lat,item.lon],{radius:7,color:'#07111f',weight:2,fillColor:item.category==='Healthcare'?'#42d6e8':item.category==='Education'?'#b69aff':item.category==='Emergency'?'#ff9e76':'#48d597',fillOpacity:.95}).bindPopup(popupText(item));
+   marker.addTo(layer);
+   const div=document.createElement('div');div.className='place';
+   const details=document.createElement('div');const b=document.createElement('b');b.textContent=item.name;const small=document.createElement('small');small.textContent=item.category;details.append(b,small);
+   const btn=document.createElement('button');btn.textContent='View';btn.addEventListener('click',()=>{map.setView([item.lat,item.lon],16);marker.openPopup()});
+   div.append(details,btn);$('placeList').append(div);
+  });
+  $('resultCount').textContent=rows.length+' results';
+  $('total').textContent=facilities.length;$('health').textContent=facilities.filter(x=>x.category==='Healthcare').length;$('education').textContent=facilities.filter(x=>x.category==='Education').length;$('other').textContent=facilities.filter(x=>!['Healthcare','Education'].includes(x.category)).length;
+  const dirs={North:0,South:0,East:0,West:0};
+  facilities.forEach(x=>{if(Math.abs(x.lat-center[0])>=Math.abs(x.lon-center[1]))dirs[x.lat>=center[0]?'North':'South']++;else dirs[x.lon>=center[1]?'East':'West']++});
+  $('distribution').textContent=`North: ${dirs.North} · South: ${dirs.South} · East: ${dirs.East} · West: ${dirs.West}. Counts are based on the mapped OpenStreetMap results within approximately 15 km of the city centre; they are not official service-coverage measurements.`;
+ }
+ async function loadData(){
+  $('message').className='';$('message').textContent='Contacting OpenStreetMap data services…';setStatus('Loading public data…');
+  let lastError=null;
+  for(const endpoint of endpoints){
+   try{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),35000);
+    let response;
+    try{response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'data='+encodeURIComponent(query),signal:controller.signal})}
+    finally{clearTimeout(timer)}
+    if(!response.ok)throw new Error('Server returned HTTP '+response.status);
+    const data=await response.json();if(!Array.isArray(data.elements))throw new Error('Unexpected data format');
+    const seen=new Set(),clean=[];
+    data.elements.forEach(el=>{
+     const [lat,lon]=coords(el),tags=el.tags||{};
+     if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
+     const name=tags.name||tags['name:en']||tags.official_name||'Unnamed public facility';
+     const key=lat.toFixed(5)+','+lon.toFixed(5)+','+name.toLowerCase();if(seen.has(key))return;seen.add(key);
+     clean.push({name,lat,lon,category:category(tags)});
     });
-
-    if(!response.ok) throw new Error('Map data service is temporarily unavailable.');
-
-    const data = await response.json();
-    const unique = new Map();
-
-    data.elements.forEach(element=>{
-      const tags = element.tags || {};
-      const category = classify(tags);
-      const coordinates = getCoordinates(element);
-      if(!category || !coordinates) return;
-
-      const key = element.type + '-' + element.id;
-      unique.set(key,{
-        id:key,
-        name:getName(tags),
-        category,
-        lat:coordinates[0],
-        lon:coordinates[1],
-        type:tags.amenity || tags.leisure || tags.tourism || 'facility',
-        address:[tags['addr:street'],tags['addr:city']].filter(Boolean).join(', ')
-      });
-    });
-
-    facilities = [...unique.values()];
-    renderAll();
-    status.textContent = '● Live map data loaded';
-    message.textContent = 'Showing ' + facilities.length +
-      ' mapped facilities returned by OpenStreetMap within approximately 15 km of central Bhopal.';
-  }catch(error){
-    status.textContent = '● Data unavailable';
-    message.innerHTML = '<span class="error">' + error.message +
-      '</span> Try Refresh data in a moment. The public data service may be busy.';
-    document.getElementById('places').innerHTML =
-      '<p class="muted">Facility data could not be loaded. Please try again later.</p>';
+    facilities=clean.sort((a,b)=>a.name.localeCompare(b.name));
+    if(!facilities.length)throw new Error('The API returned no matching facilities');
+    render();$('message').textContent='Live OpenStreetMap data loaded successfully.';setStatus('Live data connected');map.fitBounds(layer.getBounds().pad(.12));return;
+   }catch(err){lastError=err}
   }
-}
-
-function renderAll(){
-  renderStats();
-  renderMarkers();
-  renderPlaces();
-  renderZones();
-}
-
-function renderStats(){
-  const count = category => facilities.filter(item=>item.category===category).length;
-  document.getElementById('total').textContent = facilities.length;
-  document.getElementById('health').textContent = count('health');
-  document.getElementById('education').textContent = count('education');
-  document.getElementById('other').textContent =
-    count('other') + count('emergency');
-}
-
-function visibleFacilities(){
-  const search = document.getElementById('search').value.toLowerCase().trim();
-  return facilities.filter(item=>{
-    const matchesCategory = activeFilter==='all' || item.category===activeFilter;
-    const matchesSearch = item.name.toLowerCase().includes(search) ||
-      item.category.toLowerCase().includes(search) ||
-      item.type.toLowerCase().includes(search);
-    return matchesCategory && matchesSearch;
-  });
-}
-
-function renderMarkers(){
-  markers.forEach(marker=>map.removeLayer(marker));
-  markers = [];
-
-  visibleFacilities().forEach(item=>{
-    const marker = L.circleMarker([item.lat,item.lon],{
-      radius:7,
-      color:categoryColors[item.category],
-      fillColor:categoryColors[item.category],
-      fillOpacity:.9,
-      weight:1
-    }).addTo(map);
-
-    marker.bindPopup(
-      '<b>' + escapeHTML(item.name) + '</b><br>' +
-      categoryName(item.category) + '<br>' +
-      '<small>' + escapeHTML(item.type) + '</small>'
-    );
-    markers.push(marker);
-  });
-}
-
-function renderPlaces(){
-  const list = document.getElementById('places');
-  const items = visibleFacilities();
-  document.getElementById('resultCount').textContent = items.length + ' results';
-
-  if(!items.length){
-    list.innerHTML='<p class="muted">No matching facilities found.</p>';
-    return;
-  }
-
-  list.innerHTML = items.slice(0,100).map(item=>`
-    <div class="place">
-      <div>
-        <strong>${escapeHTML(item.name)}</strong>
-        <small>${escapeHTML(item.type)}</small>
-      </div>
-      <span class="tag">${categoryName(item.category)}</span>
-      <button onclick="focusPlace('${item.id}')">View</button>
-    </div>
-  `).join('');
-}
-
-function renderZones(){
-  const zones = {North:0,South:0,East:0,West:0};
-  facilities.forEach(item=>{
-    const latDiff = item.lat - BHOPAL[0];
-    const lonDiff = item.lon - BHOPAL[1];
-    if(Math.abs(latDiff)>Math.abs(lonDiff)){
-      zones[latDiff>=0?'North':'South']++;
-    }else{
-      zones[lonDiff>=0?'East':'West']++;
-    }
-  });
-
-  const max = Math.max(1,...Object.values(zones));
-  document.getElementById('zones').innerHTML =
-    Object.entries(zones).map(([name,count])=>`
-      <div class="zone-row">
-        <div class="zone-label"><span>${name}</span><b>${count}</b></div>
-        <div class="bar"><span style="width:${count/max*100}%"></span></div>
-      </div>
-    `).join('');
-}
-
-function setFilter(filter,button){
-  activeFilter = filter;
-  document.querySelectorAll('.filters button').forEach(btn=>btn.classList.remove('active'));
-  button.classList.add('active');
-  renderMarkers();
-  renderPlaces();
-}
-
-function focusPlace(id){
-  const item = facilities.find(place=>place.id===id);
-  if(!item) return;
-  map.setView([item.lat,item.lon],16);
-  const marker = markers.find(m=>{
-    const p=m.getLatLng();
-    return p.lat===item.lat && p.lng===item.lon;
-  });
-  if(marker) marker.openPopup();
-}
-
-function locateMe(){
-  if(!navigator.geolocation){
-    alert('Location is not supported by this browser.');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(position=>{
-    const point=[position.coords.latitude,position.coords.longitude];
-    if(userMarker) map.removeLayer(userMarker);
-    userMarker=L.marker(point).addTo(map).bindPopup('Your current location').openPopup();
-    map.setView(point,14);
-  },()=>{
-    alert('Location permission was not granted or location is unavailable.');
-  });
-}
-
-function resetMap(){
-  map.setView(BHOPAL,12);
-}
-
-function escapeHTML(value){
-  return String(value).replace(/[&<>"']/g,char=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[char]));
-}
-
-document.getElementById('search').addEventListener('input',()=>{
-  renderMarkers();
-  renderPlaces();
-});
-
-loadFacilities();
+  facilities=[];render();$('message').className='error';$('message').textContent='Could not load live data right now. Public map servers may be busy or unreachable. Please try Refresh data in a little while. ('+(lastError?.message||'Connection error')+')';setStatus('Data service unavailable',true);
+ }
+ $('search').addEventListener('input',render);
+ document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');activeCategory=btn.dataset.category;render()}));
+ $('refresh').addEventListener('click',loadData);
+ $('reset').addEventListener('click',()=>map.setView(center,12));
+ $('locate').addEventListener('click',()=>{if(!navigator.geolocation){$('message').textContent='Location is not supported by this browser.';return}navigator.geolocation.getCurrentPosition(pos=>{const p=[pos.coords.latitude,pos.coords.longitude];L.marker(p).addTo(map).bindPopup('Your current location').openPopup();map.setView(p,14)},()=>{$('message').textContent='Location permission was not granted or location is unavailable.'})});
+ loadData();
+})();
 </script>
 </body>
 </html>
