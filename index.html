@@ -3,316 +3,523 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#07111f">
 <title>Bhopal CivicLens | Smart City Intelligence</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📍%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--bg:#07111f;--panel:#101e30;--line:#263a52;--text:#edf5ff;--muted:#91a5bd;--cyan:#39d5e8}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 15% 0%,#10243b 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
-.wrap{max-width:1450px;margin:auto;padding:26px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:28px}
-.brand{font-size:24px;font-weight:800}.brand span{color:var(--cyan)}
-.subbrand{font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:5px}
-.status{border:1px solid var(--line);background:#102238;padding:10px 14px;border-radius:30px;color:var(--muted);font-size:12px}
-.dot{display:inline-block;width:8px;height:8px;background:#e5b85c;border-radius:50%;margin-right:8px}
-.hero{margin:24px 0}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:3px;font-weight:700}
-.hero h1{font-size:clamp(28px,4vw,46px);margin:10px 0}
-.hero p{color:var(--muted);max-width:720px;line-height:1.6}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
-.stat,.panel{background:linear-gradient(145deg,var(--panel),#0c1929);border:1px solid var(--line);border-radius:16px}
-.stat{padding:18px}.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase}
-.stat strong{display:block;font-size:30px;margin:9px 0 3px}.stat span{font-size:12px;color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:16px}
-.panel{padding:18px;min-width:0}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:15px}
-.panel h2{font-size:17px;margin:0}.muted{color:var(--muted);font-size:12px}
-.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
-.filter,button{border:1px solid var(--line);background:#13243a;color:#cbd9e9;border-radius:9px;padding:9px 12px;cursor:pointer;font-size:12px}
-.filter.active{background:#123d4b;border-color:#247f8c;color:#7ceafa}
-.filter:hover,button:hover{border-color:var(--cyan)}
-#map{height:490px;border-radius:12px;overflow:hidden;background:#14243a}
-.mapnote{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.5}
-.search{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:#0b1828;color:var(--text);outline:none;margin-bottom:12px}
-.list{display:flex;flex-direction:column;gap:9px;max-height:440px;overflow:auto}
-.place{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;background:#0d1a2b;border:1px solid #203249;border-radius:11px}
-.place b{display:block;font-size:13px}.place small{display:block;color:var(--muted);margin-top:5px}
-.place button{padding:7px 10px;white-space:nowrap}
-.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-.info p{color:var(--muted);font-size:13px;line-height:1.7}
-.pill{display:inline-block;background:#122c3d;border:1px solid #245064;color:#8ce9f3;border-radius:20px;padding:6px 9px;font-size:11px;margin:4px}
-#message{color:var(--muted);font-size:12px;margin:10px 0;line-height:1.5}
-.error{color:#ffb4a9!important}.success{color:#79e2b4!important}
-.footer{text-align:center;color:#71869e;font-size:11px;padding:26px 0 8px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.bottom{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#map{height:420px}}
-@media(max-width:480px){.wrap{padding:15px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:25px}#map{height:360px}}
+body{font-family:Inter,sans-serif;background:radial-gradient(circle at 10% 0%,#0f233d 0%,#060d19 45%);color:#e2e8f0}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0b1422}
+::-webkit-scrollbar-thumb{background:#1e324a;border-radius:4px}
+.leaflet-popup-content-wrapper{background:#0e1a2b!important;color:#f1f5f9!important;border:1px solid #2a4365!important;border-radius:12px!important}
+.leaflet-popup-tip{background:#0e1a2b!important}
+.leaflet-container{background:#0a1320!important;font-family:Inter,sans-serif!important}
+.custom-pin{display:flex;align-items:center;justify-content:center;border-radius:50%;color:white;font-weight:bold;box-shadow:0 0 12px #0009}
+.cat-btn.active{background:#38bdf833;border-color:#38bdf8;color:#38bdf8}
 </style>
 </head>
-<body>
-<div class="wrap">
-<header class="top">
-<div><div class="brand">📍 <span>CivicLens</span></div><div class="subbrand">BHOPAL SMART CITY INTELLIGENCE</div></div>
-<div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Starting map…</span></div>
+
+<body class="min-h-screen">
+<div class="max-w-[1550px] mx-auto p-4 sm:p-6 lg:p-8">
+
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-700">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-2xl">📍</span>
+<h1 class="text-3xl font-extrabold text-white">Civic<span class="text-sky-400">Lens</span></h1>
+</div>
+<p class="text-xs font-semibold tracking-widest text-slate-400 mt-1 uppercase">Bhopal Smart City Intelligence & Geospatial Explorer</p>
+</div>
+<div class="flex items-center gap-3 bg-slate-900 border border-slate-700 px-4 py-3 rounded-full text-xs">
+<span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+<span id="statusText">Initializing map...</span>
+</div>
 </header>
 
-<section class="hero">
-<div class="eyebrow">GEOSPATIAL PUBLIC SERVICE EXPLORER</div>
-<h1>Explore Bhopal. Understand Your City.</h1>
-<p>Discover public facilities across Bhopal through an interactive map. Explore healthcare, education, emergency services and public spaces using open map data.</p>
+<section class="my-6">
+<div class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-1">Open Geospatial Explorer</div>
+<h2 class="text-xl sm:text-3xl font-bold text-white">Explore Bhopal Facilities & City Infrastructure</h2>
+<p class="text-slate-400 text-sm mt-2 max-w-3xl">
+Explore healthcare, education, emergency services and public spaces mapped in OpenStreetMap.
+</p>
 </section>
 
-<section class="stats">
-<div class="stat"><small>Facilities found</small><strong id="total">—</strong><span>Live OSM results</span></div>
-<div class="stat"><small>Healthcare</small><strong id="health">—</strong><span>Hospitals and clinics</span></div>
-<div class="stat"><small>Education</small><strong id="education">—</strong><span>Schools and colleges</span></div>
-<div class="stat"><small>Other services</small><strong id="other">—</strong><span>Emergency and public places</span></div>
-</section>
-
-<main class="layout">
-<section class="panel">
-<div class="panelhead"><h2>City Intelligence Map</h2><span class="muted">Bhopal, Madhya Pradesh</span></div>
-<div class="filters" id="filters">
-<button class="filter active" data-category="All">All</button>
-<button class="filter" data-category="Healthcare">Healthcare</button>
-<button class="filter" data-category="Education">Education</button>
-<button class="filter" data-category="Emergency">Emergency</button>
-<button class="filter" data-category="Public spaces">Public spaces</button>
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+<small class="text-slate-400 uppercase">Total Facilities</small>
+<strong id="statTotal" class="text-3xl block mt-2">0</strong>
 </div>
-<div id="map"></div>
-<div class="mapnote">Map tiles © OpenStreetMap contributors. Facility data © OpenStreetMap contributors via Overpass API.</div>
+<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+<small class="text-red-400 uppercase">Healthcare</small>
+<strong id="statHealth" class="text-3xl block mt-2 text-red-400">0</strong>
+</div>
+<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+<small class="text-blue-400 uppercase">Education</small>
+<strong id="statEdu" class="text-3xl block mt-2 text-blue-400">0</strong>
+</div>
+<div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+<small class="text-amber-400 uppercase">Emergency & Public</small>
+<strong id="statOther" class="text-3xl block mt-2 text-amber-400">0</strong>
+</div>
 </section>
 
-<aside class="panel">
-<div class="panelhead"><h2>Explore Facilities</h2><span class="muted" id="resultCount">0 results</span></div>
-<input class="search" id="search" placeholder="Search hospitals, colleges, places…" aria-label="Search facilities">
-<div id="message" aria-live="polite">Loading public facilities…</div>
-<div class="list" id="placeList"></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-<button id="locate">◎ Find my location</button>
-<button id="refresh">↻ Refresh data</button>
-<button id="reset">⌖ Reset map</button>
+<main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+<section class="lg:col-span-8 bg-slate-900 border border-slate-700 rounded-2xl p-4">
+<div class="flex flex-col gap-3 mb-4">
+<div>
+<h3 class="text-lg font-bold">City Intelligence Map</h3>
+<span class="text-xs text-slate-400">Bhopal, Madhya Pradesh, India</span>
+</div>
+<div id="categoryFilters" class="flex flex-wrap gap-2">
+<button data-cat="All" class="cat-btn active border border-sky-400 px-3 py-2 rounded-lg text-xs">All</button>
+<button data-cat="Healthcare" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Healthcare</button>
+<button data-cat="Education" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Education</button>
+<button data-cat="Emergency" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Emergency</button>
+<button data-cat="Public spaces" class="cat-btn border border-slate-600 px-3 py-2 rounded-lg text-xs">Public Spaces</button>
+</div>
+</div>
+
+<div id="map" class="w-full h-[460px] sm:h-[520px] rounded-xl overflow-hidden"></div>
+<div class="flex justify-between text-xs text-slate-400 mt-3">
+<span>Map tiles © OpenStreetMap contributors</span>
+<span id="dataProvenance">Source: OpenStreetMap</span>
+</div>
+</section>
+
+<aside class="lg:col-span-4 bg-slate-900 border border-slate-700 rounded-2xl p-4 flex flex-col">
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-lg font-bold">Facility Directory</h3>
+<span id="resultCount" class="text-xs text-sky-400">0 results</span>
+</div>
+
+<input id="searchInput" type="text" placeholder="Search hospital, college, park..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm outline-none mb-3">
+
+<div id="statusMessage" class="text-xs text-slate-400 bg-slate-950 border border-slate-700 p-3 rounded-lg mb-3">
+Waiting for OpenStreetMap data...
+</div>
+
+<div id="facilityList" class="flex flex-col gap-2 overflow-y-auto max-h-[340px] mb-4">
+</div>
+
+<div class="grid grid-cols-3 gap-2 mt-auto pt-3 border-t border-slate-700">
+<button id="btnLocate" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">🎯 My Location</button>
+<button id="btnRefresh" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">🔄 Refresh</button>
+<button id="btnReset" class="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs">⌖ Reset</button>
 </div>
 </aside>
 </main>
 
-<section class="bottom">
-<div class="panel info"><h2>Area Distribution</h2><p id="distribution">Directional facility counts will appear after live data loads. This is not an official service coverage measurement.</p></div>
-<div class="panel info">
-<h2>Data & Technology</h2>
-<p>Map rendering: Leaflet. Map tiles: OpenStreetMap. Live facility data: OpenStreetMap Overpass API. Hosting: GitHub Pages. AWS integration is planned and is not yet active in this prototype.</p>
-<span class="pill">Open data</span><span class="pill">Interactive map</span><span class="pill">Geospatial discovery</span>
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+<div class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
+<h3 class="font-bold mb-3">Cardinal Facility Spread</h3>
+<p id="directionalText" class="text-sm text-slate-400">Waiting for spatial data...</p>
+<div class="mt-4 space-y-3 text-sm">
+<div class="flex justify-between"><span>North / South</span><span id="axisNSVal">0% / 0%</span></div>
+<div class="h-2 bg-slate-800 rounded-full overflow-hidden flex">
+<div id="barNorth" class="bg-sky-400" style="width:50%"></div>
+<div id="barSouth" class="bg-indigo-500" style="width:50%"></div>
+</div>
+<div class="flex justify-between"><span>East / West</span><span id="axisEWVal">0% / 0%</span></div>
+<div class="h-2 bg-slate-800 rounded-full overflow-hidden flex">
+<div id="barEast" class="bg-emerald-500" style="width:50%"></div>
+<div id="barWest" class="bg-amber-500" style="width:50%"></div>
+</div>
+</div>
+</div>
+
+<div class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
+<h3 class="font-bold mb-3">Data & Architecture</h3>
+<p class="text-sm text-slate-400 leading-relaxed">
+CivicLens uses Leaflet for map visualization and OpenStreetMap Overpass API for retrieving mapped public facilities. Data shown depends on the availability and completeness of OpenStreetMap.
+</p>
+<div class="flex flex-wrap gap-2 mt-4">
+<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">OpenStreetMap</span>
+<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">Overpass API</span>
+<span class="bg-slate-950 border border-slate-700 px-3 py-2 rounded-full text-xs text-sky-400">Leaflet JS</span>
+</div>
+<p class="text-xs text-amber-400 mt-4">AWS integration is not yet enabled in this version.</p>
 </div>
 </section>
 
-<section class="panel info" style="margin-top:16px">
-<h2>About CivicLens</h2>
-<p>Bhopal CivicLens is a geospatial exploration project that helps people discover public facilities across Bhopal. Listings may be incomplete and should be independently verified before use in an emergency.</p>
+<section class="bg-slate-900 border border-slate-700 rounded-2xl p-5">
+<h3 class="font-bold mb-2">About Bhopal CivicLens</h3>
+<p class="text-sm text-slate-400">
+An interactive geospatial explorer for public facilities in Bhopal, Madhya Pradesh. OpenStreetMap data may be incomplete or outdated. For emergencies, use official emergency services.
+</p>
 </section>
-<div class="footer">BHOPAL CIVICLENS · Geospatial learning project · Map data © OpenStreetMap contributors</div>
 </div>
+
+<footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-700 mt-8">
+BHOPAL CIVICLENS · Geospatial Intelligence Project · © OpenStreetMap Contributors
+</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
 (() => {
 'use strict';
-const $=id=>document.getElementById(id);
-const center=[23.2599,77.4126];
 
-if(!window.L){
- $('statusText').textContent='Map library unavailable';
- $('message').textContent='Leaflet could not load. Check your internet connection and reload.';
- $('message').className='error';
- return;
-}
+const CENTER = [23.2599, 77.4126];
+const ZOOM = 12;
 
-const map=L.map('map').setView(center,12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
- maxZoom:19,attribution:'&copy; OpenStreetMap contributors'
-}).addTo(map);
+const $ = id => document.getElementById(id);
 
-const layer=L.layerGroup().addTo(map);
-let facilities=[];
-let activeCategory='All';
-let loading=false;
-let controller=null;
-
-const endpoints=[
- 'https://overpass-api.de/api/interpreter',
- 'https://overpass.kumi.systems/api/interpreter',
- 'https://overpass.private.coffee/api/interpreter'
+const endpoints = [
+'https://overpass-api.de/api/interpreter',
+'https://overpass.kumi.systems/api/interpreter',
+'https://overpass.private.coffee/api/interpreter'
 ];
 
-const query='[out:json][timeout:20];(nwr(around:10000,23.2599,77.4126)[amenity~"^(hospital|clinic|doctors|school|college|university|police|fire_station|bus_station|library)$"];nwr(around:10000,23.2599,77.4126)[leisure~"^(park|garden)$"];nwr(around:10000,23.2599,77.4126)[tourism~"^(museum|attraction)$"];);out center 120;';
+const categoryConfig = {
+'Healthcare': {color:'#ef4444', icon:'🏥'},
+'Education': {color:'#3b82f6', icon:'🎓'},
+'Emergency': {color:'#f59e0b', icon:'🚨'},
+'Public spaces': {color:'#10b981', icon:'🌳'}
+};
 
-function status(text,error=false){
- $('statusText').textContent=text;
- $('statusDot').style.background=error?'#e5b85c':'#48d597';
-}
-function categoryOf(t){
- if(['hospital','clinic','doctors','dentist','pharmacy'].includes(t.amenity)||t.healthcare)return 'Healthcare';
- if(['school','college','university','kindergarten'].includes(t.amenity))return 'Education';
- if(['police','fire_station'].includes(t.amenity))return 'Emergency';
- if(['park','garden'].includes(t.leisure)||t.tourism)return 'Public spaces';
- if(['bus_station','library'].includes(t.amenity))return 'Public spaces';
- return null;
-}
-function nameOf(t){
- return t.name||t['name:en']||t.operator||t.official_name||'Unnamed public facility';
-}
-function coordsOf(el){
- if(typeof el.lat==='number'&&typeof el.lon==='number')return [el.lat,el.lon];
- if(el.center&&typeof el.center.lat==='number'&&typeof el.center.lon==='number')return [el.center.lat,el.center.lon];
- return null;
-}
-function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function visible(){
- const q=$('search').value.trim().toLowerCase();
- return facilities.filter(f=>(activeCategory==='All'||f.category===activeCategory)&&(!q||(f.name+' '+f.category+' '+f.type).toLowerCase().includes(q)));
-}
-function render(){
- layer.clearLayers();
- const rows=visible();
- $('resultCount').textContent=rows.length+' results';
+let map;
+let markers;
+let facilities = [];
+let activeCategory = 'All';
+let loading = false;
+let userMarker = null;
 
- rows.forEach(f=>{
-  L.marker([f.lat,f.lon]).bindPopup('<b>'+escapeHTML(f.name)+'</b><br>'+escapeHTML(f.category)+'<br><small>'+escapeHTML(f.type)+'</small>').addTo(layer);
- });
-
- $('placeList').innerHTML=rows.slice(0,100).map((f,i)=>
-  '<div class="place"><div><b>'+escapeHTML(f.name)+'</b><small>'+escapeHTML(f.category)+' · '+escapeHTML(f.type)+'</small></div><button data-index="'+i+'">View</button></div>'
- ).join('')||'<div class="muted">No facilities match this search or category.</div>';
-
- $('placeList').querySelectorAll('button[data-index]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-   const f=rows[Number(btn.dataset.index)];
-   map.setView([f.lat,f.lon],16);
-   L.popup().setLatLng([f.lat,f.lon]).setContent('<b>'+escapeHTML(f.name)+'</b>').openOn(map);
-  });
- });
-
- $('total').textContent=facilities.length;
- $('health').textContent=facilities.filter(f=>f.category==='Healthcare').length;
- $('education').textContent=facilities.filter(f=>f.category==='Education').length;
- $('other').textContent=facilities.filter(f=>!['Healthcare','Education'].includes(f.category)).length;
-
- const n=facilities.length;
- const north=facilities.filter(f=>f.lat>center[0]+.025).length;
- const south=facilities.filter(f=>f.lat<center[0]-.025).length;
- const east=facilities.filter(f=>f.lon>center[1]+.025).length;
- const west=facilities.filter(f=>f.lon<center[1]-.025).length;
- $('distribution').textContent=n
-  ?`Among ${n} loaded listings: ${north} are north, ${south} south, ${east} east and ${west} west of the map centre. This is a simple directional count, not a service quality assessment.`
-  :'Directional counts will appear after live data loads.';
+function status(message, type='loading') {
+$('statusText').textContent = message;
+const dot = $('statusDot');
+dot.className = 'w-2.5 h-2.5 rounded-full ' +
+(type === 'success' ? 'bg-emerald-400' :
+type === 'error' ? 'bg-red-500' : 'bg-amber-400 animate-pulse');
 }
 
-async function fetchWithTimeout(url,ms){
- const localController=new AbortController();
- const timer=setTimeout(()=>localController.abort(),ms);
- try{
-  return await fetch(url,{method:'GET',signal:localController.signal,cache:'no-store'});
- }finally{
-  clearTimeout(timer);
- }
+function escapeHTML(value) {
+return String(value).replace(/[&<>"']/g, c => ({
+'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+}[c]));
 }
 
-async function loadData(){
- if(loading)return;
- loading=true;
- $('refresh').disabled=true;
- $('message').className='';
- $('message').textContent='Loading live OpenStreetMap data. Trying available data servers…';
- status('Loading live data…');
-
- const errors=[];
- try{
-  let data=null;
-  for(const endpoint of endpoints){
-   try{
-    const url=endpoint+'?data='+encodeURIComponent(query);
-    const response=await fetchWithTimeout(url,25000);
-    if(!response.ok)throw new Error('HTTP '+response.status);
-    const json=await response.json();
-    if(!json||!Array.isArray(json.elements))throw new Error('Invalid data response');
-    data=json;
-    break;
-   }catch(err){
-    errors.push(err.name==='AbortError'?'Request timed out':err.message);
-   }
-  }
-
-  if(!data)throw new Error(errors.join(' | ')||'All data servers unavailable');
-
-  const unique=new Map();
-  for(const el of data.elements){
-   const tags=el.tags||{};
-   const category=categoryOf(tags);
-   const coords=coordsOf(el);
-   if(!category||!coords)continue;
-   const [lat,lon]=coords;
-   if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;
-   const key=el.type+':'+el.id;
-   unique.set(key,{
-    id:key,name:nameOf(tags),category,
-    type:tags.amenity||tags.leisure||tags.tourism||tags.healthcare||'public facility',
-    lat,lon
-   });
-  }
-
-  facilities=Array.from(unique.values());
-  if(!facilities.length)throw new Error('No matching facilities were returned for this area.');
-
-  render();
-  $('message').className='success';
-  $('message').textContent='Successfully loaded '+facilities.length+' live OpenStreetMap facilities.';
-  status('Live data connected');
- }catch(err){
-  facilities=[];
-  render();
-  $('message').className='error';
-  $('message').textContent='Live facility data is currently unavailable. The map still works, but the public data servers did not respond. Details: '+err.message+'. Please try Refresh data later.';
-  status('Data service unavailable',true);
- }finally{
-  loading=false;
-  $('refresh').disabled=false;
- }
+function initMap() {
+if (!window.L) {
+status('Map library unavailable', 'error');
+$('statusMessage').textContent = 'Leaflet could not load. Check your internet connection.';
+return false;
 }
 
-$('filters').addEventListener('click',e=>{
- const btn=e.target.closest('button[data-category]');
- if(!btn)return;
- activeCategory=btn.dataset.category;
- document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b===btn));
- render();
+map = L.map('map').setView(CENTER, ZOOM);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+maxZoom: 19,
+attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+markers = L.layerGroup().addTo(map);
+return true;
+}
+
+function classify(tags) {
+const a = tags.amenity || '';
+const l = tags.leisure || '';
+const t = tags.tourism || '';
+
+if (['hospital','clinic','doctors','pharmacy'].includes(a) || tags.healthcare) return 'Healthcare';
+if (['school','college','university','kindergarten'].includes(a)) return 'Education';
+if (['police','fire_station'].includes(a)) return 'Emergency';
+if (['park','garden'].includes(l) || ['museum','attraction'].includes(t) || ['bus_station','library'].includes(a)) return 'Public spaces';
+
+return null;
+}
+
+function coordinates(element) {
+if (Number.isFinite(element.lat) && Number.isFinite(element.lon)) {
+return [element.lat, element.lon];
+}
+if (element.center && Number.isFinite(element.center.lat) && Number.isFinite(element.center.lon)) {
+return [element.center.lat, element.center.lon];
+}
+return null;
+}
+
+function getFiltered() {
+const query = $('searchInput').value.trim().toLowerCase();
+
+return facilities.filter(f => {
+const categoryMatch = activeCategory === 'All' || f.category === activeCategory;
+const textMatch = !query || (f.name + ' ' + f.category + ' ' + f.type).toLowerCase().includes(query);
+return categoryMatch && textMatch;
 });
-$('search').addEventListener('input',render);
-$('refresh').addEventListener('click',loadData);
-$('reset').addEventListener('click',()=>{
- map.setView(center,12);
- activeCategory='All';
- $('search').value='';
- document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.category==='All'));
- render();
-});
-$('locate').addEventListener('click',()=>{
- if(!navigator.geolocation){
-  $('message').textContent='Location is not supported by this browser.';
-  return;
- }
- $('message').textContent='Requesting your location permission…';
- navigator.geolocation.getCurrentPosition(pos=>{
-  const point=[pos.coords.latitude,pos.coords.longitude];
-  map.setView(point,15);
-  L.marker(point).addTo(map).bindPopup('Your current location').openPopup();
-  $('message').textContent='Your location is shown on the map.';
- },err=>{
-  $('message').textContent='Could not access your location. Please allow location permission in your browser.';
- },{enableHighAccuracy:true,timeout:10000});
+}
+
+function render() {
+if (!map || !markers) return;
+
+markers.clearLayers();
+
+const visible = getFiltered();
+$('resultCount').textContent = visible.length + ' results';
+
+visible.forEach((f, index) => {
+const cfg = categoryConfig[f.category];
+
+const icon = L.divIcon({
+className: '',
+html: `<div class="custom-pin" style="background:${cfg.color};width:29px;height:29px">${cfg.icon}</div>`,
+iconSize:[29,29],
+iconAnchor:[14,14]
 });
 
+const popup = `
+<div style="min-width:150px">
+<strong>${escapeHTML(f.name)}</strong>
+<p>${escapeHTML(f.category)} · ${escapeHTML(f.type)}</p>
+<p style="font-size:10px;color:#94a3b8">
+${f.lat.toFixed(5)}, ${f.lon.toFixed(5)}
+</p>
+</div>`;
+
+L.marker([f.lat,f.lon], {icon})
+.bindPopup(popup)
+.addTo(markers);
+});
+
+if (!visible.length) {
+$('facilityList').innerHTML =
+'<div class="text-center py-8 text-slate-400 text-sm">No facilities to display.</div>';
+} else {
+$('facilityList').innerHTML = visible.map((f,i) => `
+<div class="bg-slate-950 border border-slate-700 p-3 rounded-xl flex justify-between items-center gap-2">
+<div class="min-w-0">
+<div class="text-xs text-slate-400">${categoryConfig[f.category].icon} ${escapeHTML(f.category)}</div>
+<div class="text-sm font-semibold truncate">${escapeHTML(f.name)}</div>
+<div class="text-xs text-slate-500 truncate">${escapeHTML(f.type)}</div>
+</div>
+<button data-index="${i}" class="view-btn bg-slate-800 px-3 py-2 rounded-lg text-xs">View</button>
+</div>`).join('');
+
+$('facilityList').querySelectorAll('.view-btn').forEach(button => {
+button.addEventListener('click', () => {
+const item = visible[Number(button.dataset.index)];
+map.flyTo([item.lat,item.lon],16);
+L.popup().setLatLng([item.lat,item.lon])
+.setContent(`<strong>${escapeHTML(item.name)}</strong>`)
+.openOn(map);
+});
+});
+}
+
+const total = facilities.length;
+const health = facilities.filter(f=>f.category==='Healthcare').length;
+const education = facilities.filter(f=>f.category==='Education').length;
+const other = total-health-education;
+
+$('statTotal').textContent = total;
+$('statHealth').textContent = health;
+$('statEdu').textContent = education;
+$('statOther').textContent = other;
+
+updateAnalytics();
+}
+
+function updateAnalytics() {
+const total = facilities.length;
+
+if (!total) {
+$('directionalText').textContent = 'No live spatial data available.';
+$('axisNSVal').textContent = '0% / 0%';
+$('axisEWVal').textContent = '0% / 0%';
+['barNorth','barSouth','barEast','barWest'].forEach(id => $(id).style.width='50%');
+return;
+}
+
+let north=0,south=0,east=0,west=0;
+
+facilities.forEach(f => {
+if (f.lat >= CENTER[0]) north++; else south++;
+if (f.lon >= CENTER[1]) east++; else west++;
+});
+
+const n=Math.round(north/total*100);
+const s=100-n;
+const e=Math.round(east/total*100);
+const w=100-e;
+
+$('axisNSVal').textContent = `${n}% / ${s}%`;
+$('axisEWVal').textContent = `${e}% / ${w}%`;
+$('barNorth').style.width=n+'%';
+$('barSouth').style.width=s+'%';
+$('barEast').style.width=e+'%';
+$('barWest').style.width=w+'%';
+$('directionalText').textContent = `Based on ${total} facilities returned by OpenStreetMap.`;
+}
+
+function makeQuery() {
+return `
+[out:json][timeout:25];
+(
+nwr["amenity"~"hospital|clinic|doctors|pharmacy|school|college|university|kindergarten|police|fire_station|bus_station|library"](23.15,77.25,23.35,77.55);
+nwr["leisure"~"park|garden"](23.15,77.25,23.35,77.55);
+nwr["tourism"~"museum|attraction"](23.15,77.25,23.35,77.55);
+);
+out center 150;
+`;
+}
+
+async function fetchEndpoint(endpoint, query) {
+const controller = new AbortController();
+const timer = setTimeout(() => controller.abort(), 20000);
+
+try {
+const url = endpoint + '?data=' + encodeURIComponent(query);
+const response = await fetch(url, {
+method:'GET',
+signal:controller.signal
+});
+
+if (!response.ok) throw new Error('HTTP ' + response.status);
+
+const data = await response.json();
+if (!data || !Array.isArray(data.elements)) {
+throw new Error('Invalid response');
+}
+return data.elements;
+} finally {
+clearTimeout(timer);
+}
+}
+
+async function loadData() {
+if (loading || !map) return;
+loading = true;
+$('btnRefresh').disabled = true;
+
+status('Connecting to OpenStreetMap...');
+$('statusMessage').textContent = 'Requesting live mapped facilities from OpenStreetMap...';
+
+let loaded = false;
+const query = makeQuery();
+const errors = [];
+
+try {
+for (const endpoint of endpoints) {
+try {
+const elements = await fetchEndpoint(endpoint,query);
+const result = [];
+const seen = new Set();
+
+elements.forEach(el => {
+const tags = el.tags || {};
+const category = classify(tags);
+const coords = coordinates(el);
+
+if (!category || !coords) return;
+
+const name = tags.name || tags['name:en'] || tags.official_name;
+if (!name) return;
+
+const id = el.type + '/' + el.id;
+if (seen.has(id)) return;
+seen.add(id);
+
+result.push({
+id,
+name,
+category,
+type: tags.amenity || tags.leisure || tags.tourism || 'Public facility',
+lat:coords[0],
+lon:coords[1]
+});
+});
+
+facilities = result;
+loaded = true;
+
+$('dataProvenance').textContent = 'Source: OpenStreetMap';
+$('statusMessage').textContent =
+`Received ${facilities.length} named facilities from OpenStreetMap.`;
+status('Live OSM Connected','success');
+break;
+
+} catch(error) {
+errors.push(error.message);
+console.warn('OSM endpoint failed:', endpoint, error);
+}
+}
+
+if (!loaded) {
+facilities = [];
+$('dataProvenance').textContent = 'Source: No live data';
+$('statusMessage').textContent =
+'OpenStreetMap services are currently unavailable. No sample or fabricated facilities are displayed. Please try Refresh later.';
+status('Live Data Unavailable','error');
+}
+
+render();
+
+} finally {
+loading = false;
+$('btnRefresh').disabled = false;
+}
+}
+
+$('categoryFilters').addEventListener('click', event => {
+const button = event.target.closest('button[data-cat]');
+if (!button) return;
+
+activeCategory = button.dataset.cat;
+
+document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+button.classList.add('active');
+
+render();
+});
+
+$('searchInput').addEventListener('input',render);
+$('btnRefresh').addEventListener('click',loadData);
+
+$('btnReset').addEventListener('click',() => {
+map.setView(CENTER,ZOOM);
+$('searchInput').value='';
+activeCategory='All';
+document.querySelectorAll('.cat-btn').forEach(b => {
+b.classList.toggle('active',b.dataset.cat==='All');
+});
+render();
+});
+
+$('btnLocate').addEventListener('click',() => {
+if (!navigator.geolocation) {
+$('statusMessage').textContent='Geolocation is not supported by this browser.';
+return;
+}
+
+$('statusMessage').textContent='Requesting your location permission...';
+
+navigator.geolocation.getCurrentPosition(position => {
+const lat=position.coords.latitude;
+const lon=position.coords.longitude;
+
+if (userMarker) map.removeLayer(userMarker);
+
+userMarker=L.marker([lat,lon]).addTo(map)
+.bindPopup('Your current location')
+.openPopup();
+
+map.flyTo([lat,lon],14);
+},() => {
+$('statusMessage').textContent='Location unavailable. Check browser permission settings.';
+});
+});
+
+if (initMap()) {
+render();
 loadData();
+}
+
 })();
 </script>
 </body>
